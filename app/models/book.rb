@@ -1,5 +1,6 @@
 class Book < ApplicationRecord
 
+  before_save :titleize
   def self.all_genres ; ['Science fiction','Drama','Action and Adventure','Romance','Mystery','Horror']; end
   validates :title, :presence => true
   validates :genre, :presence => true
@@ -12,6 +13,10 @@ class Book < ApplicationRecord
  
   def isbn_not_required?
     publish_date && publish_date < @@isbn_required_date
+  end
+
+  def titleize()
+    self.title = self.title.downcase.split(/\s+/).map(&:capitalize).join(' ')
   end
 
 end
