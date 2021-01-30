@@ -1,0 +1,21 @@
+%h1 All Books
+ 
+%table#books
+  %thead
+    %tr
+      %th Book Title
+      %th Genre
+      %th ISBN Number
+      %th Publish Date
+      %th More Info
+  %tbody
+    - @books.each do |book|
+      = render :partial => 'table_rows', locals: {book: book}
+      -# %tr
+      -#   %td= book.title 
+      -#   %td= book.genre
+      -#   %td= book.isbn
+      -#   %td= book.publish_date
+      -#   %td= link_to "More about #{book.title}", book_path(book)
+
+= link_to 'Add new book', new_book_path
