@@ -1,5 +1,12 @@
 %h2 Create New Book
  
 = form_tag books_path, :method => :post do
+  - unless @book.errors.empty?
+    #warning
+      Errors prevented this book from being #{controller.action_name}d:
+      %ul
+        - @book.errors.full_messages.each do |error|
+          %li= error
+
   = render :partial => 'book_form'
   = submit_tag 'Save Changes'

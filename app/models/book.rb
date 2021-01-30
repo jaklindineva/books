@@ -5,7 +5,7 @@ class Book < ApplicationRecord
   validates :genre, :presence => true
   validates :publish_date, :presence => true
 
-  validates :isbn, :presence => true,
+  validates :isbn, :presence => {message: 'ISBN cannot be empty if the book is published after 01.01.1967'},
     :unless => :isbn_not_required?
  
   @@isbn_required_date = Date.parse('1 Jan 1967')
