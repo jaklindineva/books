@@ -19,4 +19,8 @@ class Book < ApplicationRecord
     self.title = self.title.downcase.split(/\s+/).map(&:capitalize).join(' ')
   end
 
+  def self.similar_books(book)
+    Book.where author: book.author
+  end
+
 end
