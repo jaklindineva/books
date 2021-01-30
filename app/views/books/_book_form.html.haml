@@ -2,10 +2,13 @@
 = text_field :book, :title
 
 = label :book, :genre, 'Genre'
-= select :book, :genre, ['Science fiction','Drama','Action and Adventure','Romance','Mystery','Horror']
+= select :book, :genre, Book.all_genres
 
 = label :book, :isbn, 'ISBN Number'
 = text_field :book, :isbn
 
 = label :book, :publish_date, 'Published On'
 = date_select :book, :publish_date, :start_year=>1900, :end_year=>2021
+
+= label :book, :description, 'Description'
+= text_area  :book, :description

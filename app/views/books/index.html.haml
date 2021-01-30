@@ -1,21 +1,24 @@
 %h1 All Books
- 
+
+= form_tag books_path, :method => :get do
+  = hidden_field_tag "title_sort", true if @title_header
+  = hidden_field_tag ":publish_date_sort", true if @date_header
+  Include:
+  - @all_genres.each do |genre|
+    = genre
+    = check_box_tag "genres[#{genre}]", 1, @selected_genres.include?(genre), :id => "genres_#{genre}"
+  = submit_tag 'Refresh', :id => 'genres_submit'
+
 %table#books
   %thead
     %tr
-      %th Book Title
+      %th{:class => @title_header}= link_to 'Book Title', books_path(:sort => 'title', :genres => @selected_genres), :id => 'title_header'
       %th Genre
       %th ISBN Number
-      %th Publish Date
+      %th{:class => @date_header}= link_to 'Publish Date', books_path(:sort => 'publish_date', :genres => @selected_genres), :id => 'publish_date_header'
       %th More Info
   %tbody
     - @books.each do |book|
       = render :partial => 'table_rows', locals: {book: book}
-      -# %tr
-      -#   %td= book.title 
-      -#   %td= book.genre
-      -#   %td= book.isbn
-      -#   %td= book.publish_date
-      -#   %td= link_to "More about #{book.title}", book_path(book)
 
 = link_to 'Add new book', new_book_path

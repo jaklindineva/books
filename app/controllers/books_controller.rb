@@ -1,7 +1,33 @@
 class BooksController < ApplicationController
 
   def index
-    @books = Book.all
+
+    if !params.key?(:genres)
+      params[:genres] = {}
+    end
+    permitted = params.permit(:sort, genres: params[:genres].keys)
+    sort = permitted[:sort] || session[:sort]
+ 
+    case sort
+    when 'title'
+      ordering,@title_header = {:title => :asc}, 'sorted'
+    when 'publish_date'      
+      ordering,@date_header = {:publish_date => :asc}, 'sorted'
+    end
+    
+    @all_genres = Book.all_genres  
+    @selected_genres = permitted[:genres] || session[:genres] || {}
+    if @selected_genres == {}   
+      @selected_genres = Hash[@all_genres.map {|genre| [genre, genre]}]
+    end
+     
+    if permitted[:sort] != session[:sort] or permitted[:genres] != session[:genres]
+      session[:sort] = sort
+      session[:genres] = @selected_genres
+      redirect_to :sort => sort, :genres => @selected_genres and return
+    end
+
+    @books = Book.where(genre: @selected_genres.keys).order(ordering)
   end
 
   def show
@@ -15,7 +41,7 @@ class BooksController < ApplicationController
 
   def create
     params.require(:book)
-    permitted = params[:book].permit(:title,:genre, :isbn, :publish_date)
+    permitted = params[:book].permit(:title,:genre, :isbn, :publish_date, :description)
     @book = Book.new(permitted)
     if @book.save
       flash[:notice] = "#{@book.title} was successfully created."
@@ -32,7 +58,7 @@ class BooksController < ApplicationController
   def update
     @book = Book.find params[:id]
     params.require(:book)
-    permitted = params[:book].permit(:title,:genre, :isbn, :publish_date)
+    permitted = params[:book].permit(:title,:genre, :isbn, :publish_date, :description)
     if @book.update_attributes(permitted)
       flash[:notice] = "#{@book.title} was successfully updated."
       redirect_to book_path(@book)
